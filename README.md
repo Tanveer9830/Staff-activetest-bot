@@ -13,7 +13,7 @@ This initial release is a careful operational foundation, not a claim that every
 
 ## Setup
 1. Node.js 20.11+. `npm install` then copy `.env.example` to `.env` and fill `DISCORD_TOKEN`, `CLIENT_ID`; never overwrite an existing `.env`.
-2. In the Discord Developer Portal enable **Server Members Intent** for complete role roster synchronization. Do not enable Presence or Message Content intent for this implementation.
+2. In the Discord Developer Portal enable **Server Members Intent** for complete role roster synchronization. Do not enable Presence intent. Message Content is off by default; if you require the implemented text-length meaningful-response filter, set `MESSAGE_CONTENT_INTENT=true` and enable the privileged intent in the Developer Portal. Otherwise only attachment-bearing messages qualify as observed responses.
 3. Invite with `bot` + `applications.commands`, and permissions limited to View Channels, Read Message History, Send Messages, Embed Links and access to configured ticket channels/threads. Use persistent storage for `DATABASE_PATH`.
 4. `npm run register` registers commands globally, or set `DEV_GUILD_ID` for development. `npm run build && npm start`.
 5. `/staff setup role:<role>` is server-owner-only. `/staff scan` performs a role roster sync and lists every stored staff profile. It intentionally reports coverage unknown until ticket monitoring has been genuinely set up.

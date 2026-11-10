@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS bot_admins(user_id TEXT PRIMARY KEY, permissions TEXT
 CREATE TABLE IF NOT EXISTS bot_admin_scopes(user_id TEXT NOT NULL, guild_id TEXT NOT NULL, PRIMARY KEY(user_id,guild_id));
 CREATE TABLE IF NOT EXISTS guild_permissions(guild_id TEXT NOT NULL,user_id TEXT NOT NULL,permission TEXT NOT NULL,PRIMARY KEY(guild_id,user_id,permission));
 CREATE TABLE IF NOT EXISTS staff_roles(guild_id TEXT NOT NULL,role_id TEXT NOT NULL,PRIMARY KEY(guild_id,role_id));
-CREATE TABLE IF NOT EXISTS staff_profiles(guild_id TEXT NOT NULL,user_id TEXT NOT NULL,username TEXT NOT NULL,display_name TEXT NOT NULL,roles TEXT NOT NULL,registered_at TEXT NOT NULL,last_work_at TEXT,warnings INTEGER NOT NULL DEFAULT 0,monitoring_status TEXT NOT NULL DEFAULT 'UNKNOWN',PRIMARY KEY(guild_id,user_id));
+CREATE TABLE IF NOT EXISTS staff_profiles(guild_id TEXT NOT NULL,user_id TEXT NOT NULL,username TEXT NOT NULL,display_name TEXT NOT NULL,roles TEXT NOT NULL,registered_at TEXT NOT NULL,last_work_at TEXT,warnings INTEGER NOT NULL DEFAULT 0,monitoring_status TEXT NOT NULL DEFAULT 'UNKNOWN',monitoring_started_at TEXT,PRIMARY KEY(guild_id,user_id));
 CREATE TABLE IF NOT EXISTS staff_role_history(id INTEGER PRIMARY KEY,guild_id TEXT NOT NULL,user_id TEXT NOT NULL,role_id TEXT NOT NULL,action TEXT NOT NULL,at TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS activity_events(id INTEGER PRIMARY KEY,guild_id TEXT NOT NULL,user_id TEXT NOT NULL,kind TEXT NOT NULL,source_id TEXT,event_key TEXT UNIQUE,at TEXT NOT NULL,metadata TEXT NOT NULL DEFAULT '{}');
 CREATE TABLE IF NOT EXISTS ticket_records(id INTEGER PRIMARY KEY,guild_id TEXT NOT NULL,channel_id TEXT NOT NULL,created_at TEXT NOT NULL,closed_at TEXT, UNIQUE(guild_id,channel_id));
@@ -26,4 +26,5 @@ CREATE TABLE IF NOT EXISTS monitoring_health(guild_id TEXT PRIMARY KEY,last_scan
 CREATE TABLE IF NOT EXISTS daily_statistics(guild_id TEXT NOT NULL,day TEXT NOT NULL,payload TEXT NOT NULL,PRIMARY KEY(guild_id,day));
 CREATE TABLE IF NOT EXISTS audit_logs(id INTEGER PRIMARY KEY,guild_id TEXT,actor_id TEXT NOT NULL,action TEXT NOT NULL,target_id TEXT,details TEXT NOT NULL DEFAULT '{}',at TEXT NOT NULL);
 CREATE INDEX IF NOT EXISTS idx_events_staff ON activity_events(guild_id,user_id,at); CREATE INDEX IF NOT EXISTS idx_reviews_guild ON warning_reviews(guild_id,status); CREATE INDEX IF NOT EXISTS idx_ticket_events ON ticket_events(guild_id,user_id,at);`);
+  const profileColumns=db.prepare('PRAGMA table_info(staff_profiles)').all() as {name:string}[]; if(!profileColumns.some(c=>c.name==='monitoring_started_at')) db.exec('ALTER TABLE staff_profiles ADD COLUMN monitoring_started_at TEXT');
 }
